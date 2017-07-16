@@ -25,7 +25,7 @@ usage db "ls --- list directory contents",0dh,0ah
       db "-p   Write a slash ('/') after each directory",0dh,0ah
       db "-r   Reverse sort order",0dh,0ah
       db "-t   Sort on time modified",0dh,0ah
-      db "-x   Write multi-column output with entries sorted accross the columns",0dh,0ah
+      db "-x   Write multi-column output with entries sorted across the columns",0dh,0ah
       db "-1   Write entries one per line",0dh,0ah
       db "$" 
       

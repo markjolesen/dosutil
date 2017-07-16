@@ -1,3 +1,11 @@
+; IO.INC
+;
+; License CC0 PUBLIC DOMAIN
+;
+; To the extent possible under law, Mark J. Olesen has waived all copyright 
+; and related or neighboring rights to LIBUTIL. This work is published 
+; from: United States.
+
 
 FILE_READ_ONLY    EQU 0x01
 FILE_HIDDEN       EQU 0x02

@@ -1,9 +1,9 @@
 
 AS=wasm
-AFLAGS=-bt=DOS -d1
+AFLAGS=-bt=DOS -d1 -i=..\libutil
 
 CC=wcc
-CFLAGS=-1 -ms -s -zls -bt=DOS -d3
+CFLAGS=-1 -ms -s -zls -bt=DOS -d3 -i=..\libutil
 
 OBJS=&
 	cmp.obj &

@@ -3,7 +3,7 @@
 ; License CC0 PUBLIC DOMAIN
 ;
 ; To the extent possible under law, Mark J. Olesen has waived all copyright 
-; and related or neighboring rights to LS. This work is published 
+; and related or neighboring rights to LIBUTIL. This work is published 
 ; from: United States.
 
 .186
