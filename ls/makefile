@@ -10,26 +10,26 @@ OBJS=&
 	dirbuf.obj &
 	fetch.obj &
 	filebuf.obj &
-	itoa.obj &
-	ltoa.obj &
 	main.obj &
 	option.obj &
 	path.obj &
 	print.obj &
 	process.obj &
-	puts.obj &
-	usage.obj &
-	qsort.obj &
-	strcmp.obj
+	usage.obj
     
-ls.exe : $(OBJS) 
-	*wlink name ls.exe format dos debug all op map file $(OBJS: =,)
+ls.exe : $(OBJS)  ..\libutil\libutil.lib
+	*wlink name ls.exe format dos debug all op map file $(OBJS: =,) library ..\libutil\libutil.lib
 
 .asm.obj :
         $(AS) $(AFLAGS) $<
         
 .c.obj :
         $(CC) $(CFLAGS) $<
+	
+..\libutil\libutil.lib :
+	@cd ..\libutil
+	@wmake 
+	@cd ..\ls
 
 clean: .SYMBOLIC
-	@rm -f *obj ls.exe *.map
+	@rm -f *.obj ls.exe *.map
