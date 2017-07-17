@@ -1,22 +1,19 @@
 
-# wc
+# cat
 
-count lines and words
+concatenate and print files
 
 # SYNOPSIS
 
-wc [OPTION]... [FILE]...
+cat [OPTION]... [FILE]...
 
 # DESCRIPTION
 
--c   Write the number of bytes
+-u   Write the number of bytes
 
 -h   Print help message and exit
 
--l   Write the number of lines
-
--w   Write the number of words
-
+FILE can be '-' for stdin.
 
 # Compiling
 
@@ -30,6 +27,6 @@ This will compile with debugger information. To strip, use the following
 command.
 
 ```
-wstrip wc.exe
+wstrip cat.exe
 ```
  
