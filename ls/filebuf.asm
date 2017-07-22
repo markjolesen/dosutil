@@ -15,6 +15,7 @@ include io.inc
 
 extrn _opt_a:byte, _opt_uS:byte, _opt_t:byte, _opt_r:byte
 extrn dta:disk_transfer_area
+extrn lf:byte
 
 public buffer_slot, buffer
 
@@ -145,7 +146,7 @@ filebuf_append proc
     and al, FILE_HIDDEN
     jz filebuf_append_check_dot
     cmp byte ptr [_opt_a], 0
-    jz filebuf_append_exit
+    jz filebuf_append_exit_success
     
 filebuf_append_check_dot:
     xor ax, ax,
@@ -156,12 +157,12 @@ filebuf_append_check_dot:
     jnz filebuf_append_start
     lodsb
     or al, al
-    jz filebuf_append_exit
+    jz filebuf_append_exit_success
     cmp al, '.'
     jnz filebuf_append_start
     lodsb
     or al, al
-    jz filebuf_append_exit
+    jz filebuf_append_exit_success
     
 filebuf_append_start:
     mov ax, word ptr [buffer_buckets]
@@ -215,11 +216,15 @@ filebuf_append_ucase_next:
 filebuf_append_done:    
     pop ds
     inc word ptr [buffer_slot]
+
+filebuf_append_exit_success:
     xor ax, ax
     jmp filebuf_append_exit
     
 filebuf_append_error:
     lea si, buffer_overflow
+    call puts
+    lea si, lf
     call puts
     mov ax, -1
     
