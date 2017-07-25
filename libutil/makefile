@@ -10,7 +10,8 @@ OBJS=&
 	ltoa.obj &
 	puts.obj &
 	qsort.obj &
-	strcmp.obj
+	strcmp.obj &
+	strcpy.obj
 
 libutil.lib : $(OBJS)
 	wlib $@ @libutil.lbc
