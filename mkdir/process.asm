@@ -50,7 +50,14 @@ process_copy:
     mov di, si ; di = head, si = tail
     xor cx, cx ; component length
     xor dx, dx ; indicator component continues
-
+    
+    cmp [byte ptr si], '\'
+    jnz process_check_drive
+    inc si
+    inc cx
+    jmp process_component_start
+    
+process_check_drive:
     ; skip drive component
     cmp ax, 3
     jb process_component_start 

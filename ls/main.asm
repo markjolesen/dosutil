@@ -23,7 +23,7 @@ scratch db 128 dup(?)
 .data
 
 extrn _opt_h:byte
-extrn path:byte, path_length:word, scratch:byte
+extrn path:byte
 extrn file_list:byte
 extrn buffer_slot:word
 
@@ -39,6 +39,7 @@ extrn fetch_dir:near
 extrn process:near
 extrn filebuf_init:near, filebuf_deinit:near
 extrn dirbuf_init:near, dirbuf_deinit:near
+extrn path_pop:near
 
 main proc
 
@@ -50,7 +51,7 @@ main proc
     mov ah, 62h ; get PSP returns bx = seg of PSP
     int 21h
     mov es, bx ; es = segment to resize
-    mov bx, (1024 * 9) / 16 
+    mov bx, (1024 * 10) / 16 
     mov ah, 04ah
     int 21h
     
@@ -84,7 +85,6 @@ main_start:
     
 main_fetch_list:
     mov byte ptr [path], 0
-    mov word ptr [path_length], 0
     mov word ptr [buffer_slot], 0
   
     ; copy file name into path
@@ -103,7 +103,6 @@ main_fetch_list_copy:
     
 main_fetch_list_copy_end:
     mov byte ptr es:[di], 0
-    mov word ptr [path_length], cx
     mov ax, word ptr [file_offset]
     add ax, cx
     inc ax
@@ -112,12 +111,14 @@ main_fetch_list_copy_end:
     jz main_exit
     
     mov al, byte ptr es:[di-1]
+    cmp al, '*'
+    jz main_fetch_list_checkwildcard
     cmp al, '\'
     jz main_fetch_list_appendwildcard
     cmp al, ':'
     jz main_fetch_list_appendbackslash
     cmp al, '.'
-    jnz main_fetch_list_start
+    jnz main_fetch_list_check_type
     cmp cx, 1
     jz main_fetch_list_appendbackslash
     cmp byte ptr es:[di-1], '.'
@@ -125,6 +126,31 @@ main_fetch_list_copy_end:
     mov byte ptr es:[di+0], '*'
     mov byte ptr es:[di+1], '0'
     jmp main_fetch_list_start
+    
+main_fetch_list_checkwildcard:
+    cmp cx, 1
+    jz main_fetch_list_hasonestar
+    mov al, byte ptr es:[di-2]
+    cmp al, '\'
+    jz main_fetch_list_hasonestar
+    cmp al, ':'
+    jz main_fetch_list_hasonestar
+    jmp main_fetch_list_start
+
+main_fetch_list_hasonestar:
+    dec di
+    jmp main_fetch_list_appendwildcard
+
+main_fetch_list_check_type:
+    ; find first file
+    mov cx, 111111b
+    lea dx, path
+    mov ah, 04eh
+    int 21h
+    jc main_fetch_list_start
+    mov al, [byte ptr dta.dta_attr]
+    test al, FILE_SUBDIRECTORY
+    jz main_fetch_list_start
     
 main_fetch_list_appendbackslash:
     mov byte ptr es:[di+0], '\'
@@ -141,17 +167,22 @@ main_fetch_list_start:
     call fetch_dir
     or ax, ax
     jnz main_fetch_list
+    call path_pop
     call process
     jmp main_fetch_list
     
 main_fetch_all:
-    lea si, scratch
+    lea si, path
     mov byte ptr [si+0], '*'
     mov byte ptr [si+1], '.'
     mov byte ptr [si+2], '*'
     mov byte ptr [si+3], 0
     mov ax, si
+    mov word ptr [buffer_slot], 0
     call fetch_dir
+    mov byte ptr [si+0], '.'
+    mov byte ptr [si+1], '\'
+    mov byte ptr [si+2], 0
     call process
 
 main_exit:

@@ -21,7 +21,7 @@ extrn buffer:word, buffer_slot:word
 extrn dta:disk_transfer_area
 extrn lf:byte
 extern scratch:byte
-extrn path:byte,path_length:word
+extrn path:byte
 
 .code
 
@@ -426,12 +426,15 @@ process_recurse_dir:
     ; copy path into scratch 
     lea si, path
     lea di, scratch
-    mov cx, word ptr [path_length]
-    or cx, cx
+    cmp byte ptr [si], 0
     jz process_recurse_append_wildcard
-    rep movsb
-    mov byte ptr [di+0], '\'
-    inc di
+    
+process_recurse_copy_next:
+    lodsb
+    stosb
+    or al, al
+    jnz process_recurse_copy_next
+    mov byte ptr [di-1], '\'
     
 process_recurse_append_wildcard:
     mov byte ptr [di+0], '*'

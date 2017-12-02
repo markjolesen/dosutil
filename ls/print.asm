@@ -93,14 +93,23 @@ file_is_exe_exit:
 file_is_exe endp
 
 ; ds:si file buffer
+;
+; returns:
+; ax characters written
 public print_file
 print_file proc
 
+    push cx
+    push dx
+    push si
     push di
+    
+    xor cx, cx ; characters written
     
     mov di, si
     add si, offset fi_name
     call puts
+    mov cx, ax
     
     cmp byte ptr es:[_opt_uF], 0
     jz print_file_switch_p
@@ -112,6 +121,7 @@ print_file proc
     mov ah, 02h
     mov dl, '\'
     int 21h
+    inc cx
     jmp print_file_exit
     
 print_file_check_exe:
@@ -123,6 +133,7 @@ print_file_check_exe:
     mov ah, 02h
     mov dl, '*'
     int 21h
+    inc cx
     jmp print_file_exit
 
 print_file_switch_p:
@@ -135,11 +146,17 @@ print_file_switch_p:
     
     mov ah, 02h
     mov dl, '\'
+    inc cx
     int 21h
 
 print_file_exit:    
+
+    mov ax, cx
     
     pop di
+    pop si
+    pop dx
+    pop cx
     
     ret
 print_file endp
