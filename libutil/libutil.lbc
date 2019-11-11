@@ -1,5 +1,8 @@
+-+norm.obj 
 -+itoa.obj 
 -+ltoa.obj 
+-+path.obj 
 -+puts.obj 
 -+qsort.obj 
 -+strcmp.obj
+-+strcpy.obj
